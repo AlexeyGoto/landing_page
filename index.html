@@ -1,1 +1,357 @@
-test
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>DED_SW — Virtual Gaming Club</title>
+  <meta name="description" content="DED_SW — виртуальный игровой клуб: мощное железо, игры установлены, доступ 24/7. Присоединяйся!" />
+  <meta name="theme-color" content="#0b0b12" />
+  <link rel="preload" href="assets/ded-sw-hero.jpg" as="image" />
+  <style>
+    :root{
+      --bg:#0b0b12;
+      --glass: rgba(15,15,25,.55);
+      --border: rgba(255,255,255,.08);
+      --fg:#e9ecf1;
+      --muted:#b9c0cc;
+      --accent:#00e0ff;        /* циан */
+      --accent2:#c850ff;       /* фиолет */
+      --radius:20px;
+      --shadow: 0 10px 30px rgba(0,0,0,.35), 0 2px 10px rgba(0,0,0,.25);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      color:var(--fg);
+      font:16px/1.55 ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial,"Noto Sans",sans-serif;
+      background:var(--bg);
+      overflow-x:hidden;
+    }
+
+    /* Фон с лёгким параллаксом */
+    #bg{
+      position:fixed; inset:-4vh -4vw;
+      background:url("assets/ded-sw-hero.jpg") center / cover no-repeat;
+      filter:brightness(.52) saturate(1.1) contrast(1.05);
+      transform:scale(1.06);
+      z-index:-2; will-change:transform;
+    }
+    /* затемняющая плёнка + «неон» полосы */
+    #bg::after{
+      content:"";
+      position:absolute; inset:0;
+      background:
+        radial-gradient(1200px 600px at 10% -10%, rgba(0,224,255,.18), transparent 60%),
+        radial-gradient(1200px 600px at 110% 110%, rgba(200,80,255,.18), transparent 60%),
+        linear-gradient(to bottom, rgba(0,0,0,.25), rgba(0,0,0,.55) 35%, rgba(0,0,0,.75));
+    }
+
+    header{
+      padding:24px 20px 0;
+    }
+    .shell{
+      width:min(1100px, 92vw);
+      margin:0 auto;
+    }
+
+    .hero{
+      margin: clamp(18px, 4vw, 28px) 0 22px;
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:18px;
+    }
+    .brand{
+      display:flex; align-items:center; gap:16px;
+      text-shadow:
+        0 0 12px rgba(0,224,255,.45),
+        0 0 24px rgba(200,80,255,.35);
+    }
+    .brand .logo{
+      width:64px; height:64px; border-radius:16px;
+      background:linear-gradient(145deg, rgba(0,224,255,.5), rgba(200,80,255,.5));
+      box-shadow: inset 0 0 35px rgba(255,255,255,.15), 0 8px 20px rgba(0,0,0,.5);
+      position:relative; overflow:hidden;
+    }
+    .brand h1{
+      margin:0;
+      font-size: clamp(28px, 5vw, 44px);
+      font-weight: 800;
+      letter-spacing:.5px;
+      line-height:1.05;
+    }
+    .subtitle{
+      margin:0; color:var(--muted);
+      font-size: clamp(14px, 2.6vw, 16px);
+    }
+
+    .cta{
+      display:flex; flex-wrap:wrap; gap:12px; margin-top:6px;
+    }
+    .btn{
+      --pad: 12px 18px;
+      display:inline-flex; align-items:center; justify-content:center;
+      gap:10px; padding: var(--pad);
+      border-radius: 999px;
+      border:1px solid var(--border);
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      color:var(--fg); text-decoration:none; font-weight:700;
+      backdrop-filter: blur(8px);
+      box-shadow: var(--shadow);
+      transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+      will-change:transform;
+    }
+    .btn:hover{ transform: translateY(-1px); border-color: rgba(255,255,255,.18) }
+    .btn:active{ transform: translateY(0) scale(.99) }
+    .btn.primary{
+      background:
+        linear-gradient(90deg, rgba(0,224,255,.35), rgba(200,80,255,.35));
+      border:1px solid rgba(255,255,255,.22);
+    }
+
+    .card{
+      background: var(--glass);
+      border:1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      position:relative;
+    }
+    .card .content{ padding:18px 18px 16px }
+    .card h2{
+      margin:0 0 10px; font-size: clamp(18px, 3.8vw, 24px);
+      letter-spacing:.2px;
+      text-shadow: 0 0 14px rgba(0,224,255,.35), 0 0 14px rgba(200,80,255,.25);
+    }
+    .grid{
+      display:grid; gap:14px;
+      grid-template-columns: 1fr;
+    }
+    @media (min-width:860px){
+      .grid{ grid-template-columns: 1.1fr .9fr }
+    }
+
+    .hardware-img{
+      width:100%; display:block; height:auto;
+      border-bottom:1px solid var(--border);
+      object-fit:cover; max-height: 260px;
+    }
+
+    details{
+      border:1px dashed rgba(255,255,255,.12);
+      border-radius:14px; padding:10px 12px; background: rgba(255,255,255,.02);
+    }
+    details[open]{ background: rgba(255,255,255,.04) }
+    summary{
+      cursor:pointer; list-style:none; font-weight:700;
+    }
+    summary::-webkit-details-marker{display:none}
+    summary:before{
+      content:"+";
+      display:inline-grid; place-items:center;
+      width:22px; height:22px; margin-right:8px;
+      border-radius:6px; border:1px solid var(--border);
+      background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.03));
+      font-weight:900;
+    }
+    details[open] summary:before{ content:"–" }
+
+    ul{ margin:8px 0 0 18px; padding:0 }
+    li{ margin:4px 0 }
+
+    footer{
+      text-align:center; color:var(--muted);
+      padding:28px 0 40px;
+      font-size:14px;
+    }
+
+    /* небольшие «неон» подчеркивания */
+    .neon{
+      position:relative; display:inline-block;
+    }
+    .neon:after{
+      content:""; position:absolute; left:0; right:0; bottom:-3px; height:2px;
+      background:linear-gradient(90deg, var(--accent), var(--accent2));
+      filter: blur(.4px); opacity:.75;
+    }
+
+    /* всплывашка-тост */
+    .toast{
+      position:fixed; left:50%; bottom:22px; transform:translateX(-50%);
+      background:rgba(20,20,30,.9); color:var(--fg);
+      padding:10px 14px; border-radius:12px; border:1px solid var(--border);
+      box-shadow: var(--shadow); z-index:20; opacity:0; pointer-events:none;
+      transition:opacity .15s ease;
+    }
+    .toast.show{ opacity:1 }
+  </style>
+</head>
+<body>
+  <div id="bg" aria-hidden="true"></div>
+
+  <header class="shell">
+    <div class="hero">
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <h1>DED-SW <span class="neon">Virtual Gaming Club</span></h1>
+          <p class="subtitle">Мощное железо. Игры установлены. Доступ 24/7.</p>
+        </div>
+      </div>
+
+      <div class="cta">
+        <!-- Заполни ссылку на своего бота/аккаунт -->
+        <a id="tgBtn" class="btn primary" href="#"
+           rel="noopener" target="_blank" aria-label="Обратная связь в Telegram">
+          💬 Обратная связь в Telegram
+        </a>
+
+        <a class="btn" href="https://fogplay.mts.ru/promo/computer/ded_sw/"
+           rel="noopener" target="_blank">
+          ⚡ Арендовать со скидкой
+        </a>
+
+        <button class="btn" id="copyLink" type="button" title="Скопировать ссылку на эту страницу">
+          🔗 Скопировать ссылку
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="shell grid" id="main">
+    <section class="card">
+      <img class="hardware-img" src="assets/6suo0IrMmuYjvTBz7JTuXVXpulTdiB-E.jpg" alt="Установленное железо — DED_SW" />
+      <div class="content">
+        <h2>Добро пожаловать в DED_SW</h2>
+        <p>У нас вас ждут мощные ПК и нескончаемые приключения. <strong>Доступность 24/7</strong> — всегда готовы к GTA V, Hogwarts Legacy или долгожданному S.T.A.L.K.E.R. 2 с русской озвучкой.</p>
+
+        <details open>
+          <summary>Железо</summary>
+          <ul>
+            <li><strong>Процессоры:</strong> Intel Core i5-12400F, i5-14400F</li>
+            <li><strong>Видеокарты:</strong> NVIDIA GeForce RTX 3060 / 4060 Ti / 5060 / 5070</li>
+          </ul>
+        </details>
+
+        <details>
+          <summary>Уже установлено</summary>
+          <ul>
+            <li>Cyberpunk 2077 + Phantom Liberty</li>
+            <li>Hogwarts Legacy — добавлена русская озвучка</li>
+            <li>S.T.A.L.K.E.R. 2: Heart of Chernobyl — Ultimate Edition — русская озвучка, ускорен запуск</li>
+            <li>Marvel’s Spider-Man Remastered — полностью на русском</li>
+            <li>Grand Theft Auto V, God of War: Ragnarök</li>
+            <li>Counter-Strike 2, Dota 2</li>
+            <li>Red Dead Redemption 2, Genshin Impact</li>
+            <li>Arena Breakout: Infinite, Rust</li>
+            <li>The Last of Us Part II</li>
+          </ul>
+          <p style="margin-left:18px">Все сюжетные игры поддерживают перенос сохранений из облака.</p>
+        </details>
+
+        <details>
+          <summary>В ожидании установки</summary>
+          <ul>
+            <li>Baldur’s Gate 3</li>
+            <li>BeamNG.drive</li>
+          </ul>
+        </details>
+      </div>
+    </section>
+
+    <aside class="card">
+      <div class="content">
+        <h2>Как играть</h2>
+        <p>Отсканируйте QR-код в конце сессии, переходите на эту страницу и берите слот. Мы держим машины «на взводе» — подключение мгновенное.</p>
+
+        <details open>
+          <summary>Подсказки</summary>
+          <ul>
+            <li>Лучший опыт — по кабелю или Wi-Fi 5/6 рядом с роутером.</li>
+            <li>Разрешения и графику настраиваем под ваш интернет, чтобы не было лагов.</li>
+            <li>Вопросы? Жмите «Обратная связь в Telegram» — поможем.</li>
+          </ul>
+        </details>
+
+        <div class="cta" style="margin-top:14px">
+          <a class="btn primary" href="https://fogplay.mts.ru/promo/computer/ded_sw/" target="_blank" rel="noopener">🚀 В бой сейчас</a>
+        </div>
+      </div>
+    </aside>
+  </main>
+
+  <footer class="shell">
+    <p>Спасибо, что заглянули! Ждём вас в игре ⚡</p>
+  </footer>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    // Параллакс фона — лёгкий и безопасный для GPU
+    (function(){
+      const bg = document.getElementById('bg');
+      let req = null;
+      window.addEventListener('pointermove', (e)=>{
+        if(req) cancelAnimationFrame(req);
+        req = requestAnimationFrame(()=>{
+          const dx = (e.clientX / innerWidth - .5) * 8;
+          const dy = (e.clientY / innerHeight - .5) * 8;
+          bg.style.transform = `translate3d(${dx}px, ${dy}px, 0) scale(1.06)`;
+        });
+      }, {passive:true});
+    })();
+
+    // Плавное появление карточек
+    (function(){
+      const io = new IntersectionObserver((entries)=>{
+        entries.forEach(e=>{
+          if(e.isIntersecting){
+            e.target.animate([{opacity:0, transform:'translateY(12px)'},{opacity:1, transform:'none'}],
+                             {duration:380, easing:'cubic-bezier(.2,.8,.2,1)', fill:'both'});
+            io.unobserve(e.target);
+          }
+        });
+      }, {threshold:.15});
+      document.querySelectorAll('.card').forEach(el=>io.observe(el));
+    })();
+
+    // Кнопка копирования ссылки
+    (function(){
+      const btn = document.getElementById('copyLink');
+      const toast = (msg)=>{
+        const t = document.getElementById('toast');
+        t.textContent = msg; t.classList.add('show');
+        setTimeout(()=>t.classList.remove('show'), 1800);
+      };
+      btn.addEventListener('click', async ()=>{
+        try{
+          await navigator.clipboard.writeText(location.href);
+          toast('Ссылка скопирована');
+        }catch(e){
+          toast('Не удалось скопировать');
+        }
+      });
+
+      // Telegram-заглушка: если href не задан, покажем всплывашку
+      const tg = document.getElementById('tgBtn');
+      if(!tg.getAttribute('href') || tg.getAttribute('href') === '#'){
+        tg.addEventListener('click', (ev)=>{
+          ev.preventDefault();
+          toast('Скоро здесь будет бот Telegram');
+        });
+      }
+    })();
+
+    // Приветствие для повторных заходов
+    (function(){
+      const key = 'ded_sw_last';
+      const last = localStorage.getItem(key);
+      if(last){
+        const el = document.querySelector('.subtitle');
+        if(el) el.textContent = 'Рады видеть снова. Готовы продолжить игру?';
+      }
+      localStorage.setItem(key, Date.now());
+    })();
+  </script>
+</body>
+</html>
