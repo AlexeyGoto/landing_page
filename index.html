@@ -183,8 +183,8 @@
 
   <script>
     // ===== утилиты =====
-    const $ = (sel, root=document) => root.querySelector(sel);
-    const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
+    const $  = (s, r=document) => r.querySelector(s);
+    const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
     const toast = (msg, ms=1800) => { const t=$("#toast"); t.textContent=msg; t.classList.add("show"); setTimeout(()=>t.classList.remove("show"), ms); };
 
     // Параллакс
@@ -255,57 +255,66 @@
         .catch(()=>{ el.textContent = ''; });
     })();
 
-    // Автоподгрузка карточек ПК с fogplay.mts.ru
-    async function fetchFogplay(){
-      const urls = [
-        'https://fogplay.mts.ru/promo/computer/ded_sw/',
-        'https://r.jina.ai/http://fogplay.mts.ru/promo/computer/ded_sw/'
-      ];
-      let text = null;
-      for(const u of urls){
-        try{
-          const res = await fetch(u, {mode:'cors'});
-          if(res.ok){ text = await res.text(); break; }
-        }catch(e){}
-      }
-      if(!text) throw new Error('Нет доступа к источнику');
-      // Парсим HTML в DOM и достаём карточки
-      const doc = new DOMParser().parseFromString(text, 'text/html');
-      const cards = doc.querySelectorAll('.card.card-outside');
-      const items = [];
-      cards.forEach(card=>{
-        const name = card.querySelector('.card__title')?.textContent?.trim() || 'ПК';
-        const price = card.querySelector('.card__price')?.textContent?.trim() || '';
-        const ping  = card.querySelector('.ping__value')?.textContent?.trim() || '';
-        const link  = card.querySelector('.card__footer a.button')?.getAttribute('href') || '';
-        if(link) items.push({name, price, ping, link});
-      });
-      return items;
-    }
-    (async function renderOffers(){
-      const box = $('#offers');
-      try{
-        const items = await fetchFogplay();
-        if(!items.length){ box.innerHTML = '<div class="offer"><small>ПК временно не отображаются.</small></div>'; return; }
-        box.innerHTML = '';
-        items.forEach((it,i)=>{
-          const row = document.createElement('div');
-          row.className = 'offer';
-          row.innerHTML = `
-            <div>
-              <div><strong>${it.name}</strong> <small>${it.ping?('· '+it.ping):''}</small></div>
-              <small>${it.price}</small>
-            </div>
-            <a class="btn primary" href="${it.link}" target="_blank" rel="nofollow noopener" ${window.ymID?'data-ym-target="play_click_'+i:''}">
-              Играть
-            </a>`;
-          box.appendChild(row);
-        });
-      }catch(e){
-        $('#offers').innerHTML = '<div class="offer"><small>Не удалось загрузить список. Проверьте доступ к fogplay.mts.ru</small></div>';
-      }
-    })();
+// ===== Рендер офферов из локального offers.json =====
+  const OFFERS_URL = './offers.json';      // GitHub Pages: тот же origin → без CORS
+  const offersBox  = document.getElementById('offers');
+  let lastHash = '';
 
+  function hash(obj){ try { return JSON.stringify(obj); } catch { return String(Math.random()); } }
+
+  function renderOffers(data){
+    const items = (data && data.items) ? data.items : [];
+    if (items.length === 0) {
+      offersBox.innerHTML = '<div class="offer"><small>ПК временно не отображаются.</small></div>';
+      return;
+    }
+    offersBox.innerHTML = '';
+    items.forEach((it,i)=>{
+      const row = document.createElement('div');
+      row.className = 'offer';
+      row.innerHTML = `
+        <div>
+          <div><strong>${it.name}</strong> <small>${it.ping ? ('· ' + it.ping) : ''}</small></div>
+          <small>${it.price || ''}</small>
+        </div>
+        <a class="btn primary" href="${it.link}" target="_blank" rel="nofollow noopener">
+          Играть
+        </a>`;
+      offersBox.appendChild(row);
+    });
+  }
+
+  async function loadOffersOnce() {
+    // no-store: обходим кэш CDN, чтобы страница видела свежий файл сразу после коммита
+    const res = await fetch(OFFERS_URL + '?t=' + Date.now(), { cache: 'no-store' });
+    if(!res.ok) throw new Error('offers.json not found');
+    const data = await res.json();
+
+    // Обновим подпись «обновлено …»
+    const meta = document.querySelector('#offers-card .visits');
+    if (meta) {
+      const when = new Date(data.ts || Date.now());
+      meta.innerHTML = `Источник данных: fogplay.mts.ru · обновлено ${when.toLocaleTimeString()} (UTC${-when.getTimezoneOffset()/60})`;
+    }
+    // Рисуем только если реально поменялось
+    const h = hash(data);
+    if (h !== lastHash) {
+      lastHash = h;
+      renderOffers(data);
+    }
+  }
+
+  // Случайная задержка 40–90 сек
+  const rnd = () => 40_000 + Math.floor(Math.random() * 51_000);
+
+  async function pollOffers(){
+    try { await loadOffersOnce(); }
+    catch(e){ /* тихо: JSON может обновляться в момент чтения */ }
+    finally { setTimeout(pollOffers, rnd()); }
+  }
+
+  // ===== стартуем немедленно и продолжаем опрос =====
+  loadOffersOnce().finally(() => setTimeout(pollOffers, rnd()));
     // Приветствие при повторном заходе
     (function(){
       const key='ded_sw_last', last=localStorage.getItem(key);
