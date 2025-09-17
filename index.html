@@ -45,14 +45,34 @@
     footer{text-align:center;color:var(--muted);padding:28px 0 40px;font-size:14px}
     .neon{position:relative;display:inline-block}
     .neon:after{content:"";position:absolute;left:0;right:0;bottom:-3px;height:2px;background:linear-gradient(90deg,var(--accent),var(--accent2));filter:blur(.4px);opacity:.75}
-    .toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:rgba(20,20,30,.9);color:var(--fg);padding:10px 14px;border-radius:12px;border:1px solid var(--border);box-shadow:var(--shadow);z-index:20;opacity:0;pointer-events:none;transition:opacity .15s}
+    .toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:rgba(20,20,30,.9);color:var(--fg);padding:10px 14px;border-radius:12px;border:1px solid var(--border);box-shadow:var(--shadow);z-index:50;opacity:0;pointer-events:none;transition:opacity .15s}
     .toast.show{opacity:1}
-    /* Секция офферов */
-    .offers{display:grid;gap:10px}
-    .offer{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;padding:10px 12px;border-radius:14px;background:rgba(255,255,255,.03);border:1px solid var(--border)}
-    .offer small{color:var(--muted)}
-    .offer a{display:inline-flex}
     .visits{opacity:.65;font-size:12px;margin-top:6px}
+
+    /* Модалка отзыва */
+    .modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;padding:18px;z-index:40}
+    .modal.open{display:flex}
+    .backdrop{position:absolute;inset:0;background:rgba(0,0,0,.55);backdrop-filter: blur(3px)}
+    .dialog{position:relative;width:min(720px, 96vw);background:var(--glass);border:1px solid var(--border);border-radius:20px;box-shadow:var(--shadow);overflow:hidden}
+    .dialog .head{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--border)}
+    .dialog .head h3{margin:0;font-size:18px}
+    .dialog .body{padding:14px 16px}
+    .dialog .row{display:grid;gap:10px;margin-bottom:12px}
+    @media(min-width:720px){ .dialog .row.split{ grid-template-columns:1fr 1fr } }
+    label{font-size:13px;color:var(--muted)}
+    input,select,textarea{
+      width:100%; padding:10px 12px; border-radius:12px; border:1px solid var(--border);
+      background:rgba(255,255,255,.04); color:var(--fg); outline:none;
+      transition:border-color .15s, box-shadow .15s;
+    }
+    input:focus,select:focus,textarea:focus{
+      border-color:rgba(255,255,255,.22);
+      box-shadow:0 0 0 3px rgba(0,224,255,.15), inset 0 1px 0 rgba(255,255,255,.05);
+    }
+    textarea{min-height:120px; resize:vertical}
+    .dialog .foot{display:flex;gap:10px;justify-content:flex-end;padding:12px 16px;border-top:1px solid var(--border)}
+    .danger{border-color:rgba(255,80,80,.35)!important}
+    .small{font-size:12px;color:var(--muted)}
   </style>
 </head>
 <body>
@@ -69,9 +89,9 @@
       </div>
 
       <div class="cta">
-        <a id="tgBtn" class="btn primary" href="#" rel="noopener" target="_blank">💬 Обратная связь в Telegram</a>
-        <a class="btn" href="https://fogplay.mts.ru/promo/computer/ded_sw/" rel="noopener" target="_blank">⚡ Арендовать со скидкой</a>
-        <button class="btn" id="copyLink" type="button">🔗 Скопировать ссылку</button>
+        <a id="tgBtn" class="btn primary" href="https://t.me/ded_swjr" target="_blank" rel="noopener">💬 Обратная связь в Telegram</a>
+        <a class="btn" href="https://fogplay.mts.ru/promo/computer/ded_sw/" target="_blank" rel="noopener">⚡ Арендовать со скидкой</a>
+        <button class="btn" id="openFeedback" type="button">✍ Оставить отзыв на сайте</button>
         <button class="btn" id="bookmarkBtn" type="button" title="Добавить в закладки">⭐ В закладки</button>
       </div>
       <div id="visits" class="visits"></div>
@@ -119,7 +139,7 @@
     <aside class="card">
       <div class="content">
         <h2>Подсказки</h2>
-        <p>Отсканируйте QR, переходите на эту страницу и берите слот. Мы держим машины «на взводе» — подключение мгновенное.</p>
+        <p>Основной канал обратной связи — <a href="https://t.me/ded_swjr" target="_blank" rel="noopener">Telegram @ded_swjr</a>. Ниже — кнопка, чтобы оставить отзыв прямо на сайте.</p>
 
         <details open>
           <summary>Горячие клавиши</summary>
@@ -127,51 +147,103 @@
             <li><strong>CTRL+SHIFT</strong> — переключение языка</li>
             <li><strong>ALT+M</strong> — главное меню качества и курсора (ставьте <em>«Ультра»</em>, разрешение <strong>1920×1080</strong>)</li>
             <li><strong>ALT+ENTER</strong> — оконный/полноэкранный режим. Если «есть звук, а картинки нет» — сверните/разверните и выставьте <strong>1920×1080</strong>, полноэкранный «эксклюзивный» предпочтительно</li>
-            <li><strong>ALT+TAB</strong> — переключение окон (поможет, если случайно запустили вторую игру)</li>
+            <li><strong>ALT+TAB</strong> — переключение окон</li>
             <li><strong>ALT+F4</strong> — закрыть игру</li>
             <li><strong>CTRL+Q</strong> — закрыть диагностическую панель</li>
             <li><strong>CTRL+SHIFT+F</strong> — развернуть браузер на весь экран</li>
           </ul>
         </details>
 
-        <details open>
-          <summary>Подсказки по сети</summary>
-          <ul>
-            <li>Лучший опыт — по кабелю или рядом с роутером (Wi-Fi 5/6).</li>
-            <li>Качество потока подстраиваем под ваш интернет, чтобы не было лагов.</li>
-            <li>Нужна помощь? Жмите «Обратная связь в Telegram».</li>
-          </ul>
-        </details>
-
         <div class="cta" style="margin-top:14px">
-          <a class="btn primary" href="https://fogplay.mts.ru/promo/computer/ded_sw/" target="_blank" rel="noopener">🚀 В бой сейчас</a>
+          <button class="btn primary" id="openFeedback2" type="button">📝 Оставить отзыв на сайте</button>
         </div>
       </div>
     </aside>
-
-    <!-- Динамические офферы Fog Play -->
-    <section class="card" id="offers-card" aria-live="polite">
-      <div class="content">
-        <h2>Доступные ПК DED_SW (авто-обновление)</h2>
-        <div id="offers" class="offers">
-          <div class="offer"><small>Загружаем список с fogplay.mts.ru…</small></div>
-        </div>
-        <p style="margin-top:6px" class="visits">Источник данных: fogplay.mts.ru (если сайт не даёт CORS, используется кэш-прокси r.jina.ai).</p>
-      </div>
-    </section>
   </main>
 
   <footer class="shell">
     <p>Спасибо, что заглянули! Ждём вас в игре ⚡</p>
   </footer>
 
+  <!-- Модальное окно отзыва -->
+  <div class="modal" id="feedbackModal" aria-hidden="true" aria-labelledby="fbTitle" role="dialog">
+    <div class="backdrop" data-close></div>
+    <form class="dialog" id="feedbackForm">
+      <div class="head">
+        <h3 id="fbTitle">Оставить отзыв</h3>
+        <a href="https://t.me/ded_swjr" target="_blank" rel="noopener" class="btn small">💬 Написать в Telegram</a>
+      </div>
+      <div class="body">
+        <div class="row split">
+          <div>
+            <label for="game">Игра</label>
+            <input id="game" name="game" list="games" placeholder="Например: S.T.A.L.K.E.R. 2" required>
+            <datalist id="games">
+              <option>Cyberpunk 2077 + Phantom Liberty</option>
+              <option>Hogwarts Legacy</option>
+              <option>S.T.A.L.K.E.R. 2: Heart of Chernobyl</option>
+              <option>Marvel's Spider-Man Remastered</option>
+              <option>Grand Theft Auto V</option>
+              <option>God of War: Ragnarök</option>
+              <option>Counter-Strike 2</option>
+              <option>Dota 2</option>
+              <option>Red Dead Redemption 2</option>
+              <option>Genshin Impact</option>
+              <option>Arena Breakout: Infinite</option>
+              <option>Rust</option>
+              <option>The Last of Us Part II</option>
+              <option>Baldur’s Gate 3</option>
+              <option>BeamNG.drive</option>
+            </datalist>
+          </div>
+          <div>
+            <label for="pc">Компьютер (номер/название)</label>
+            <input id="pc" name="pc" list="pcs" placeholder="Например: PC-3 или DED-SW#2" required>
+            <datalist id="pcs">
+              <option>PC-1</option><option>PC-2</option><option>PC-3</option><option>PC-4</option>
+            </datalist>
+          </div>
+        </div>
+
+        <div class="row">
+          <label for="review">Отзыв</label>
+          <textarea id="review" name="review" placeholder="Что понравилось, что улучшить — лаги, картинка, звук…" required></textarea>
+        </div>
+
+        <div class="row split">
+          <div>
+            <label for="contact">Контакт для связи (Telegram)</label>
+            <input id="contact" name="contact" placeholder="@nickname или ссылка" pattern="^(@|https?:\/\/t\.me\/)?[A-Za-z0-9_]{5,}$" required>
+            <div class="small">Мы ответим вам в Telegram.</div>
+          </div>
+          <div>
+            <label for="rate">Оценка</label>
+            <select id="rate" name="rate">
+              <option value="5">5 — огонь 🔥</option>
+              <option value="4">4 — отлично</option>
+              <option value="3">3 — норм</option>
+              <option value="2">2 — так себе</option>
+              <option value="1">1 — плохо</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="small">При отправке текст отзыва скопируется в буфер обмена и откроется окно отправки в Telegram.</div>
+      </div>
+      <div class="foot">
+        <button type="button" class="btn" data-close>Отмена</button>
+        <button type="submit" class="btn primary">🚀 Отправить в Telegram</button>
+      </div>
+    </form>
+  </div>
+
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-  <!-- Опционально: Яндекс.Метрика. Замените YOUR_METRIKA_ID на свой ID или удалите блок -->
+  <!-- (опционально) Яндекс.Метрика: замените YOUR_METRIKA_ID -->
   <script>
     (function initMetrika(){
-      const ID = 'YOUR_METRIKA_ID'; // ← подставь свой ID
-      if(!/^\d+$/.test(ID)) return;   // чтобы без ошибок, если не задан
+      const ID = 'YOUR_METRIKA_ID';
+      if(!/^\d+$/.test(ID)) return;
       (function(m,e,t,r,i,k,a){ m[i]=m[i]||function(){ (m[i].a=m[i].a||[]).push(arguments) };
         m[i].l=1*new Date(); k=e.createElement(t), a=e.getElementsByTagName(t)[0];
         k.async=1; k.src=r; a.parentNode.insertBefore(k,a)
@@ -183,8 +255,8 @@
 
   <script>
     // ===== утилиты =====
-    const $ = (sel, root=document) => root.querySelector(sel);
-    const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
+    const $ = (s, r=document) => r.querySelector(s);
+    const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
     const toast = (msg, ms=1800) => { const t=$("#toast"); t.textContent=msg; t.classList.add("show"); setTimeout(()=>t.classList.remove("show"), ms); };
 
     // Параллакс
@@ -213,30 +285,16 @@
       $$('.card').forEach(el=>io.observe(el));
     })();
 
-    // Копирование ссылки
-    (function(){
-      $('#copyLink').addEventListener('click', async ()=>{
-        try{ await navigator.clipboard.writeText(location.href); toast('Ссылка скопирована'); }
-        catch{ toast('Не удалось скопировать'); }
-      });
-      const tg = $('#tgBtn');
-      if(!tg.getAttribute('href') || tg.getAttribute('href')==='#'){
-        tg.addEventListener('click', ev=>{ ev.preventDefault(); toast('Скоро здесь будет бот Telegram'); });
-      }
-    })();
-
     // Кнопка «В закладки»
     (function(){
       const btn = $('#bookmarkBtn');
       const isApple = /Mac|iPhone|iPad/i.test(navigator.platform) || /Mac OS|iPhone|iPad/i.test(navigator.userAgent);
       const combo = isApple ? '⌘+D' : 'Ctrl+D';
-      btn.addEventListener('click', e=>{
-        // старые API (Firefox старый, IE)
+      btn.addEventListener('click', ()=>{
         try{
-          if(window.sidebar && window.sidebar.addPanel){ window.sidebar.addPanel(document.title, location.href, ""); toast('Добавлено в закладки'); return; }
-          if(window.external && 'AddFavorite' in window.external){ window.external.AddFavorite(location.href, document.title); toast('Добавлено в закладки'); return; }
+          if(window.sidebar?.addPanel){ window.sidebar.addPanel(document.title, location.href, ""); toast('Добавлено в закладки'); return; }
+          if(window.external?.AddFavorite){ window.external.AddFavorite(location.href, document.title); toast('Добавлено в закладки'); return; }
         }catch{}
-        // современный мир — показываем подсказку
         if(/iPhone|iPad|iPod/i.test(navigator.userAgent)){
           toast('Нажмите «Поделиться» → «В закладки» или «На экран Домой».', 2600);
         }else if(/Safari/i.test(navigator.userAgent) && !/Chrome/i.test(navigator.userAgent)){
@@ -247,7 +305,7 @@
       });
     })();
 
-    // Счётчик переходов (CountAPI) — число покажем мелким текстом
+    // Счётчик переходов (CountAPI)
     (function(){
       const el = $('#visits');
       fetch('https://api.countapi.xyz/hit/ded-sw-landing/qr')
@@ -255,55 +313,99 @@
         .catch(()=>{ el.textContent = ''; });
     })();
 
-    // Автоподгрузка карточек ПК с fogplay.mts.ru
-    async function fetchFogplay(){
-      const urls = [
-        'https://fogplay.mts.ru/promo/computer/ded_sw/',
-        'https://r.jina.ai/http://fogplay.mts.ru/promo/computer/ded_sw/'
-      ];
-      let text = null;
-      for(const u of urls){
+    // ===== Модалка/форма отзыва =====
+    (function(){
+      const modal = $('#feedbackModal');
+      const form  = $('#feedbackForm');
+      const openers = [$('#openFeedback'), $('#openFeedback2')].filter(Boolean);
+
+      const open = ()=>{ modal.classList.add('open'); modal.setAttribute('aria-hidden','false'); $('#game')?.focus(); };
+      const close= ()=>{ modal.classList.remove('open'); modal.setAttribute('aria-hidden','true'); };
+
+      openers.forEach(b=>b.addEventListener('click', open));
+      modal.addEventListener('click', e=>{ if(e.target.matches('[data-close], .backdrop')) close(); });
+      addEventListener('keydown', e=>{ if(e.key==='Escape' && modal.classList.contains('open')) close(); });
+
+      // Автосохранение черновика
+      const LSKEY = 'ded_sw_feedback';
+      const saveDraft = ()=> {
+        const data = Object.fromEntries(new FormData(form).entries());
+        localStorage.setItem(LSKEY, JSON.stringify(data));
+      };
+      const loadDraft = ()=> {
+        const raw = localStorage.getItem(LSKEY); if(!raw) return;
         try{
-          const res = await fetch(u, {mode:'cors'});
-          if(res.ok){ text = await res.text(); break; }
-        }catch(e){}
+          const data = JSON.parse(raw);
+          Object.entries(data).forEach(([k,v])=>{ const el=form.elements[k]; if(el) el.value=v; });
+        }catch{}
+      };
+      loadDraft();
+      form.addEventListener('input', saveDraft);
+
+      function sanitizeHandle(s){
+        s = (s||'').trim();
+        if (s.startsWith('https://t.me/')) s = s.replace('https://t.me/','');
+        if (!s.startsWith('@')) s = '@'+s;
+        return s;
       }
-      if(!text) throw new Error('Нет доступа к источнику');
-      // Парсим HTML в DOM и достаём карточки
-      const doc = new DOMParser().parseFromString(text, 'text/html');
-      const cards = doc.querySelectorAll('.card.card-outside');
-      const items = [];
-      cards.forEach(card=>{
-        const name = card.querySelector('.card__title')?.textContent?.trim() || 'ПК';
-        const price = card.querySelector('.card__price')?.textContent?.trim() || '';
-        const ping  = card.querySelector('.ping__value')?.textContent?.trim() || '';
-        const link  = card.querySelector('.card__footer a.button')?.getAttribute('href') || '';
-        if(link) items.push({name, price, ping, link});
-      });
-      return items;
-    }
-    (async function renderOffers(){
-      const box = $('#offers');
-      try{
-        const items = await fetchFogplay();
-        if(!items.length){ box.innerHTML = '<div class="offer"><small>ПК временно не отображаются.</small></div>'; return; }
-        box.innerHTML = '';
-        items.forEach((it,i)=>{
-          const row = document.createElement('div');
-          row.className = 'offer';
-          row.innerHTML = `
-            <div>
-              <div><strong>${it.name}</strong> <small>${it.ping?('· '+it.ping):''}</small></div>
-              <small>${it.price}</small>
-            </div>
-            <a class="btn primary" href="${it.link}" target="_blank" rel="nofollow noopener" ${window.ymID?'data-ym-target="play_click_'+i:''}">
-              Играть
-            </a>`;
-          box.appendChild(row);
+
+      function confetti(x=window.innerWidth/2, y=window.innerHeight-30){
+        for(let i=0;i<24;i++){
+          const p=document.createElement('span');
+          p.textContent='✦';
+          p.style.position='fixed';
+          p.style.left=x+'px'; p.style.top=y+'px';
+          p.style.fontSize=(12+Math.random()*10)+'px';
+          p.style.pointerEvents='none';
+          p.style.filter='drop-shadow(0 0 6px rgba(0,224,255,.6))';
+          document.body.appendChild(p);
+          const a= Math.random()*Math.PI*2, v= 2+Math.random()*6, t= 600+Math.random()*600;
+          const dx=Math.cos(a)*v, dy=Math.sin(a)*v-4;
+          const start=performance.now();
+          requestAnimationFrame(function tick(now){
+            const dt=now-start; const nx=x+dx*dt/10, ny=y+dy*dt/10 + 0.002*dt*dt;
+            p.style.transform=`translate(${nx-x}px,${ny-y}px) rotate(${dt/3}deg)`;
+            p.style.opacity= String(1 - dt/t);
+            if(dt<t) requestAnimationFrame(tick); else p.remove();
+          });
+        }
+      }
+
+      form.addEventListener('submit', async (e)=>{
+        e.preventDefault();
+        // Снимаем «красные рамки»
+        $$('.danger', form).forEach(el=>el.classList.remove('danger'));
+
+        const data = Object.fromEntries(new FormData(form).entries());
+        const { game, pc, review, contact, rate } = data;
+
+        let ok = true;
+        ['game','pc','review','contact'].forEach(id=>{
+          const el = form.elements[id];
+          if(!el.value.trim()){ el.classList.add('danger'); ok=false; }
         });
-      }catch(e){
-        $('#offers').innerHTML = '<div class="offer"><small>Не удалось загрузить список. Проверьте доступ к fogplay.mts.ru</small></div>';
-      }
+        if(!ok){ toast('Заполните обязательные поля'); return; }
+
+        const handle = sanitizeHandle(contact);
+        const payload =
+`Отзыв DED_SW
+Игра: ${game}
+Компьютер: ${pc}
+Оценка: ${rate}/5
+Контакт: ${handle}
+
+${review}`;
+
+        try{ await navigator.clipboard.writeText(payload); toast('Отзыв скопирован в буфер'); }catch{}
+        // Откроем Telegram share (пользователь выберет чат) + дадим прямую ссылку в личку
+        const share = 'https://t.me/share/url?url=' + encodeURIComponent(location.href) + '&text=' + encodeURIComponent(payload);
+        window.open(share, '_blank', 'noopener');
+        setTimeout(()=>window.open('https://t.me/ded_swjr','_blank','noopener'), 200);
+
+        confetti();
+        if(window.ymID){ try{ ym(window.ymID, 'reachGoal', 'feedback_submit'); }catch{} }
+        close();
+      });
     })();
 
     // Приветствие при повторном заходе
