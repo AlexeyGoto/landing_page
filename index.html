@@ -53,6 +53,37 @@
     .offer small{color:var(--muted)}
     .offer a{display:inline-flex}
     .visits{opacity:.65;font-size:12px;margin-top:6px}
+      .offers-wrap { margin-top: 6px }
+  .offers-grid {
+    display:grid; gap:16px;
+    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  }
+  .tile {
+    position:relative;
+    background:rgba(255,255,255,.035);
+    border:1px solid var(--border);
+    border-radius:16px;
+    padding:14px; display:flex; flex-direction:column; gap:10px;
+    min-height: 210px;
+  }
+  .tile .head h3 { margin:0; font-size:16px; line-height:1.25 }
+  .tile .meta { color:var(--muted); font-size:12px }
+  .tile .btns { display:flex; gap:8px; margin-top:auto; flex-wrap:wrap }
+  .btn.outline{
+    background: transparent;
+    border:1px dashed rgba(255,255,255,.2);
+  }
+  .tile .games {
+    border-top:1px solid var(--border);
+    margin-top:8px; padding-top:8px; display:none;
+  }
+  .tile.open .games { display:block }
+  .tile .games ul { margin:6px 0 0 18px }
+  
+  
+  
+  
+  
   </style>
 </head>
 <body>
@@ -150,15 +181,18 @@
     </aside>
 
     <!-- Динамические офферы Fog Play -->
-    <section class="card" id="offers-card" aria-live="polite">
-      <div class="content">
-        <h2>Доступные ПК DED_SW (авто-обновление)</h2>
-        <div id="offers" class="offers">
-          <div class="offer"><small>Загружаем список с fogplay.mts.ru…</small></div>
-        </div>
-        <p style="margin-top:6px" class="visits">Источник данных: fogplay.mts.ru (если сайт не даёт CORS, используется кэш-прокси r.jina.ai).</p>
+<section class="card" id="offers-card" aria-live="polite">
+  <div class="content">
+    <h2>Доступные ПК DED_SW (авто-обновление)</h2>
+    <div class="offers-wrap">
+      <div id="offersGrid" class="offers-grid">
+        <div class="tile"><div class="meta">Загружаем список…</div></div>
       </div>
-    </section>
+    </div>
+    <p id="offersMeta" class="visits">Источник: fogplay.mts.ru</p>
+  </div>
+</section>
+
   </main>
 
   <footer class="shell">
@@ -181,6 +215,28 @@
     })();
   </script>
 
+<script>
+  // Единый список отображаем «как у оригинала» по кнопке
+  const GAME_LIST = [
+    "Cyberpunk 2077 + Phantom Liberty",
+    "Hogwarts Legacy — русская озвучка",
+    "S.T.A.L.K.E.R. 2: Heart of Chernobyl (Ultimate) — русская озвучка, быстрый запуск",
+    "Marvel's Spider-Man Remastered — полностью на русском",
+    "Grand Theft Auto V",
+    "God of War: Ragnarök",
+    "Counter-Strike 2",
+    "Dota 2",
+    "Red Dead Redemption 2",
+    "Genshin Impact",
+    "Arena Breakout: Infinite",
+    "Rust",
+    "The Last of Us Part II",
+    "Baldur’s Gate 3 (в очереди)",
+    "BeamNG.drive (в очереди)"
+  ];
+</script>
+
+  
   <script>
     // ===== утилиты =====
     const $  = (s, r=document) => r.querySelector(s);
@@ -255,66 +311,80 @@
         .catch(()=>{ el.textContent = ''; });
     })();
 
-// ===== Рендер офферов из локального offers.json =====
-  const OFFERS_URL = './offers.json';      // GitHub Pages: тот же origin → без CORS
-  const offersBox  = document.getElementById('offers');
+
+
+
+  const OFFERS_URL = './offers.json';
+  const grid = document.getElementById('offersGrid');
+  const meta = document.getElementById('offersMeta');
   let lastHash = '';
 
-  function hash(obj){ try { return JSON.stringify(obj); } catch { return String(Math.random()); } }
+  function hash(x){ try { return JSON.stringify(x) } catch { return Math.random()+'' } }
 
-  function renderOffers(data){
-    const items = (data && data.items) ? data.items : [];
-    if (items.length === 0) {
-      offersBox.innerHTML = '<div class="offer"><small>ПК временно не отображаются.</small></div>';
-      return;
-    }
-    offersBox.innerHTML = '';
-    items.forEach((it,i)=>{
-      const row = document.createElement('div');
-      row.className = 'offer';
-      row.innerHTML = `
-        <div>
-          <div><strong>${it.name}</strong> <small>${it.ping ? ('· ' + it.ping) : ''}</small></div>
-          <small>${it.price || ''}</small>
+  function tileHTML(it, idx){
+    const price = it.price ? `<span>${it.price}</span>` : '';
+    const ping  = it.ping  ? `<span>· ${it.ping}</span>`  : '';
+    const games = GAME_LIST.map(g=>`<li>${g}</li>`).join('');
+    return `
+      <article class="tile" data-i="${idx}">
+        <div class="head">
+          <h3>${it.name}</h3>
+          <div class="meta">${price} ${ping}</div>
         </div>
-        <a class="btn primary" href="${it.link}" target="_blank" rel="nofollow noopener">
-          Играть
-        </a>`;
-      offersBox.appendChild(row);
-    });
+        <div class="btns">
+          <a class="btn primary" href="${it.link}" target="_blank" rel="nofollow noopener">Играть</a>
+          <button class="btn outline js-games">Список игр</button>
+        </div>
+        <div class="games">
+          <strong>Установлено / планируется:</strong>
+          <ul>${games}</ul>
+          <small class="meta">Сохранения сюжетных игр — из облака.</small>
+        </div>
+      </article>`;
   }
 
-  async function loadOffersOnce() {
-    // no-store: обходим кэш CDN, чтобы страница видела свежий файл сразу после коммита
+  function render(data){
+    const items = data?.items || [];
+    if(!items.length){
+      grid.innerHTML = `<div class="tile"><div class="meta">ПК временно не отображаются.</div></div>`;
+      return;
+    }
+    grid.innerHTML = items.map((it, i)=>tileHTML(it, i)).join('');
+
+    // Делегируем клики «Список игр»
+    grid.addEventListener('click', (e)=>{
+      const btn = e.target.closest('.js-games'); if(!btn) return;
+      const tile = btn.closest('.tile');
+      tile.classList.toggle('open');
+      btn.textContent = tile.classList.contains('open') ? 'Скрыть список' : 'Список игр';
+    }, { once:true }); // навесим один раз
+  }
+
+  async function loadOnce(){
     const res = await fetch(OFFERS_URL + '?t=' + Date.now(), { cache: 'no-store' });
     if(!res.ok) throw new Error('offers.json not found');
     const data = await res.json();
 
-    // Обновим подпись «обновлено …»
-    const meta = document.querySelector('#offers-card .visits');
+    const h = hash(data);
+    if (h !== lastHash) { lastHash = h; render(data); }
+
     if (meta) {
       const when = new Date(data.ts || Date.now());
-      meta.innerHTML = `Источник данных: fogplay.mts.ru · обновлено ${when.toLocaleTimeString()} (UTC${-when.getTimezoneOffset()/60})`;
-    }
-    // Рисуем только если реально поменялось
-    const h = hash(data);
-    if (h !== lastHash) {
-      lastHash = h;
-      renderOffers(data);
+      const tz = -when.getTimezoneOffset()/60;
+      meta.textContent = `Источник: fogplay.mts.ru · обновлено ${when.toLocaleTimeString()} (UTC${tz>=0?'+':''}${tz})`;
     }
   }
 
-  // Случайная задержка 40–90 сек
-  const rnd = () => 40_000 + Math.floor(Math.random() * 51_000);
+  const rnd = () => 40_000 + Math.floor(Math.random()*51_000);
+  async function poll(){ try{ await loadOnce(); }catch{} finally{ setTimeout(poll, rnd()); } }
 
-  async function pollOffers(){
-    try { await loadOffersOnce(); }
-    catch(e){ /* тихо: JSON может обновляться в момент чтения */ }
-    finally { setTimeout(pollOffers, rnd()); }
-  }
+  // старт: сразу грузим и запускаем опрос
+  loadOnce().finally(()=> setTimeout(poll, rnd()));
 
-  // ===== стартуем немедленно и продолжаем опрос =====
-  loadOffersOnce().finally(() => setTimeout(pollOffers, rnd()));
+
+
+
+    
     // Приветствие при повторном заходе
     (function(){
       const key='ded_sw_last', last=localStorage.getItem(key);
