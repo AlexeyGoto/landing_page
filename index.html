@@ -28,10 +28,19 @@
     .logo{width:64px;height:64px;border-radius:16px;background:linear-gradient(145deg, rgba(0,224,255,.5), rgba(200,80,255,.5));box-shadow:inset 0 0 35px rgba(255,255,255,.15),0 8px 20px rgba(0,0,0,.5)}
     h1{margin:0;font-size:clamp(28px,5vw,44px);font-weight:800;letter-spacing:.5px;line-height:1.05}
     .subtitle{margin:0;color:var(--muted);font-size:clamp(14px,2.6vw,16px)}
+
+    /* CTA */
     .cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:6px}
     .btn{--pad:12px 18px;display:inline-flex;align-items:center;justify-content:center;gap:10px;padding:var(--pad);border-radius:999px;border:1px solid var(--border);background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));color:var(--fg);text-decoration:none;font-weight:700;backdrop-filter:blur(8px);box-shadow:var(--shadow);transition:transform .15s,box-shadow .15s,border-color .15s}
     .btn:hover{transform:translateY(-1px);border-color:rgba(255,255,255,.18)} .btn:active{transform:translateY(0) scale(.99)}
     .btn.primary{background:linear-gradient(90deg, rgba(0,224,255,.35), rgba(200,80,255,.35));border:1px solid rgba(255,255,255,.22)}
+    /* мобильный: 2 столбца, скрыть «В закладки» */
+    @media (max-width:600px){
+      .cta{display:grid;grid-template-columns:1fr 1fr}
+      .cta .btn{width:100%}
+      #bookmarkBtn{display:none}
+    }
+
     .card{background:var(--glass);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;position:relative}
     .card .content{padding:18px 18px 16px}
     .card h2{margin:0 0 10px;font-size:clamp(18px,3.8vw,24px);letter-spacing:.2px;text-shadow:0 0 14px rgba(0,224,255,.35),0 0 14px rgba(200,80,255,.25)}
@@ -66,15 +75,27 @@
       background:rgba(255,255,255,.06); color:var(--fg); outline:none;
       transition:border-color .15s, box-shadow .15s;
     }
-    option { color:#111; background:#fff; } /* контраст списка */
+    option { color:#111; background:#fff; }
     input:focus,select:focus,textarea:focus{
       border-color:rgba(255,255,255,.22);
       box-shadow:0 0 0 3px rgba(0,224,255,.15), inset 0 1px 0 rgba(255,255,255,.05);
     }
     textarea{min-height:120px; resize:vertical}
     .dialog .foot{display:flex;gap:10px;justify-content:flex-end;padding:12px 16px;border-top:1px solid var(--border)}
+    @media (max-width:560px){ .dialog .foot{display:grid;grid-template-columns:1fr 1fr} .dialog .foot .btn{width:100%} }
     .danger{border-color:rgba(255,80,80,.55)!important; box-shadow:0 0 0 3px rgba(255,80,80,.18)!important}
     .small{font-size:12px;color:var(--muted)}
+
+    /* ========= ⚙️ OPTIONAL GAME FX (можно удалить этот блок целиком) ========= */
+    #fx-stars{position:fixed;inset:0;pointer-events:none;z-index:-1;overflow:hidden}
+    .star{position:absolute;width:2px;height:2px;border-radius:50%;
+      background:radial-gradient(circle, #fff, #9cf 60%, transparent 62%);
+      opacity:.9; animation:fall linear infinite}
+    @keyframes fall{0%{transform:translate3d(var(--x,0),-10%,0)}100%{transform:translate3d(calc(var(--x,0) + 40vw),110%,0)}}
+    /* «скан-линии» как у CRT */
+    #fx-crt{position:fixed;inset:0;pointer-events:none;mix-blend-mode:overlay;opacity:.09;z-index:30;
+      background:repeating-linear-gradient(0deg,rgba(255,255,255,.25) 0 1px,transparent 1px 2px)}
+    /* ======================================================================= */
   </style>
 </head>
 <body>
@@ -178,7 +199,7 @@
       <div class="body">
         <div class="row split">
           <div>
-            <label for="game">Игра</label>
+            <label for="game">Игра <span style="color:#9cf">*</span></label>
             <input id="game" name="game" list="games" placeholder="Например: S.T.A.L.K.E.R. 2" required>
             <datalist id="games">
               <option>Cyberpunk 2077 + Phantom Liberty</option>
@@ -200,20 +221,20 @@
           </div>
           <div>
             <label for="pc">Компьютер (номер/название)</label>
-            <input id="pc" name="pc" list="pcs" placeholder="Например: 12952x3" required>
+            <input id="pc" name="pc" list="pcs" placeholder="Например: 12952x3">
             <datalist id="pcs"></datalist>
           </div>
         </div>
 
         <div class="row">
           <label for="review">Отзыв</label>
-          <textarea id="review" name="review" placeholder="Что понравилось, что улучшить — лаги, картинка, звук…" required></textarea>
+          <textarea id="review" name="review" placeholder="Что понравилось, что улучшить — лаги, картинка, звук…"></textarea>
         </div>
 
         <div class="row split">
           <div>
             <label for="contact">Контакт для связи (Telegram)</label>
-            <input id="contact" name="contact" placeholder="@nickname или ссылка на профиль" required>
+            <input id="contact" name="contact" placeholder="@nickname или ссылка на профиль">
             <div class="small">Мы ответим вам в Telegram.</div>
           </div>
           <div>
@@ -228,7 +249,7 @@
           </div>
         </div>
 
-        <div class="small">Отзыв отправится на сервер (webhook). Личные данные не публикуются.</div>
+        <div class="small">Отправка возможна даже с пустыми полями — укажите хотя бы игру.</div>
       </div>
       <div class="foot">
         <button type="button" class="btn" data-close>Отмена</button>
@@ -288,9 +309,10 @@
       $$('.card').forEach(el=>io.observe(el));
     })();
 
-    /* закладки */
+    /* закладки (на мобилках кнопка скрыта CSS) */
     (function(){
       const btn = $('#bookmarkBtn');
+      if(!btn) return;
       const isApple = /Mac|iPhone|iPad/i.test(navigator.platform) || /Mac OS|iPhone|iPad/i.test(navigator.userAgent);
       const combo = isApple ? '⌘+D' : 'Ctrl+D';
       btn.addEventListener('click', ()=>{
@@ -342,15 +364,10 @@
       /* черновик */
       const LSKEY = 'ded_sw_feedback';
       const saveDraft = ()=> localStorage.setItem(LSKEY, JSON.stringify(Object.fromEntries(new FormData(form).entries())));
-      const loadDraft = ()=> {
-        const raw = localStorage.getItem(LSKEY); if(!raw) return;
-        try{ const d=JSON.parse(raw); Object.entries(d).forEach(([k,v])=>{ const el=form.elements[k]; if(el) el.value=v; }); }catch{}
-      };
+      const loadDraft = ()=> { const raw=localStorage.getItem(LSKEY); if(!raw) return; try{ const d=JSON.parse(raw); Object.entries(d).forEach(([k,v])=>{ const el=form.elements[k]; if(el) el.value=v; }); }catch{} };
       loadDraft(); form.addEventListener('input', saveDraft);
 
-      const sanitizeHandle = s => {
-        s=(s||'').trim(); if (s.startsWith('https://t.me/')) s=s.replace('https://t.me/',''); if (s && !s.startsWith('@')) s='@'+s; return s;
-      };
+      const sanitizeHandle = s => { s=(s||'').trim(); if (s.startsWith('https://t.me/')) s=s.replace('https://t.me/',''); if (s && !s.startsWith('@')) s='@'+s; return s; };
 
       function confetti(x=window.innerWidth/2, y=window.innerHeight-30){
         for(let i=0;i<24;i++){
@@ -367,24 +384,22 @@
         $$('.danger', form).forEach(el=>el.classList.remove('danger'));
 
         const data = Object.fromEntries(new FormData(form).entries());
-        let ok = true; ['game','pc','review','contact'].forEach(id=>{ const el=form.elements[id]; if(!el.value.trim()){ el.classList.add('danger'); ok=false; } });
-        if(!ok){ toast('Заполните обязательные поля'); return; }
+        const gameOk = (data.game||'').trim().length>0;
+        if(!gameOk){ form.elements['game'].classList.add('danger'); toast('Укажите игру'); return; }
 
         const payload = {
-          game: data.game.trim(),
-          pc: data.pc.trim(),
-          review: data.review.trim(),
-          contact: sanitizeHandle(data.contact),
+          game: (data.game||'').trim(),
+          pc: (data.pc||'').trim(),
+          review: (data.review||'').trim(),
+          contact: sanitizeHandle(data.contact||''),
           rate: Number(data.rate||5),
           ts: new Date().toISOString(),
           page: location.href,
           ua: navigator.userAgent
         };
 
-        // отправляем ТОЛЬКО на вебхук (без писем и без скачивания)
         try{
           sendBtn.disabled = true; sendBtn.textContent = '⏳ Отправляем…';
-          // простая CORS-схема: text/plain + no-cors (без preflight)
           await fetch(WEBHOOK_URL, {
             method: 'POST',
             mode: 'no-cors',
@@ -416,6 +431,32 @@
       const m = new URLSearchParams(location.search).get('pc');
       if(m){ const el = document.getElementById('pc'); if(el) el.value = m; }
     })();
+
+    /* ========= ⚙️ OPTIONAL GAME FX (можно отключить, установив ENABLE_FX=false) ========= */
+    (function gameFX(){
+      const ENABLE_FX = true;  // ← поставьте false, чтобы убрать анимации
+      if(!ENABLE_FX) return;
+
+      // звёздное небо
+      const stars = document.createElement('div'); stars.id='fx-stars'; document.body.appendChild(stars);
+      for(let i=0;i<40;i++){
+        const s=document.createElement('i'); s.className='star';
+        s.style.left=Math.random()*100+'vw'; s.style.setProperty('--x', (Math.random()*40-20)+'vw');
+        s.style.animationDuration = (8+Math.random()*12)+'s';
+        s.style.animationDelay = (-Math.random()*10)+'s';
+        stars.appendChild(s);
+      }
+      // лёгкие «скан-линии»
+      const crt = document.createElement('div'); crt.id='fx-crt'; document.body.appendChild(crt);
+
+      // Konami code → «Power up!»
+      const seq = ['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'];
+      let pos=0; addEventListener('keydown',e=>{
+        pos = (e.key===seq[pos]) ? pos+1 : 0;
+        if(pos===seq.length){ pos=0; document.querySelector('.logo')?.animate([{transform:'scale(1)'},{transform:'scale(1.25) rotate(6deg)'},{transform:'scale(1)'}],{duration:700,easing:'cubic-bezier(.2,.8,.2,1)'}); toast('POWER UP! ⚡',1600); }
+      });
+    })();
+    /* ===================================================================== */
   </script>
 </body>
 </html>
