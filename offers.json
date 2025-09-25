@@ -1,25 +1,25 @@
 {
-  "ts": 1758811923858,
+  "ts": 1758813268355,
   "url": "https://fogplay.mts.ru/promo/computer/ded_sw/",
   "count": 3,
   "items": [
     {
-      "name": "12952X5",
-      "price": "17 ₽/час",
+      "name": "12952X1",
+      "price": "30 ₽/час",
       "ping": "Ping",
-      "link": "https://fogplay.mts.ru/platform/comp/23221/?tariff_id=33045&steamacc=0&isPromo=1&slug=ded_sw"
+      "link": "https://fogplay.mts.ru/platform/comp/21049/?tariff_id=36927&steamacc=0&isPromo=1&slug=ded_sw"
+    },
+    {
+      "name": "12952X5",
+      "price": "30 ₽/час",
+      "ping": "Ping",
+      "link": "https://fogplay.mts.ru/platform/comp/23221/?tariff_id=36927&steamacc=0&isPromo=1&slug=ded_sw"
     },
     {
       "name": "12952X6",
-      "price": "17 ₽/час",
+      "price": "30 ₽/час",
       "ping": "Ping",
-      "link": "https://fogplay.mts.ru/platform/comp/23222/?tariff_id=33045&steamacc=0&isPromo=1&slug=ded_sw"
-    },
-    {
-      "name": "12952X3",
-      "price": "17 ₽/час",
-      "ping": "Ping",
-      "link": "https://fogplay.mts.ru/platform/comp/21296/?tariff_id=33045&steamacc=0&isPromo=1&slug=ded_sw"
+      "link": "https://fogplay.mts.ru/platform/comp/23222/?tariff_id=36927&steamacc=0&isPromo=1&slug=ded_sw"
     }
   ]
 }
