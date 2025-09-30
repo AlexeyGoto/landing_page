@@ -1,49 +1,49 @@
 {
-  "ts": 1759225413029,
+  "ts": 1759226090418,
   "url": "https://fogplay.mts.ru/promo/computer/ded_sw/",
   "count": 7,
   "items": [
     {
-      "name": "12952X10",
-      "price": "30 ₽/час",
-      "ping": "Ping",
-      "link": "https://fogplay.mts.ru/platform/comp/23911/?tariff_id=36927&steamacc=0&isPromo=1&slug=ded_sw"
-    },
-    {
-      "name": "12952X5",
-      "price": "17 ₽/час",
-      "ping": "Ping",
-      "link": "https://fogplay.mts.ru/platform/comp/23221/?tariff_id=33045&steamacc=0&isPromo=1&slug=ded_sw"
-    },
-    {
-      "name": "12952X9",
+      "name": "12952X1",
       "price": "26 ₽/час",
       "ping": "Ping",
-      "link": "https://fogplay.mts.ru/platform/comp/23473/?tariff_id=33046&steamacc=0&isPromo=1&slug=ded_sw"
-    },
-    {
-      "name": "12952X6",
-      "price": "17 ₽/час",
-      "ping": "Ping",
-      "link": "https://fogplay.mts.ru/platform/comp/23222/?tariff_id=33045&steamacc=0&isPromo=1&slug=ded_sw"
-    },
-    {
-      "name": "12952X1",
-      "price": "17 ₽/час",
-      "ping": "Ping",
-      "link": "https://fogplay.mts.ru/platform/comp/21049/?tariff_id=33045&steamacc=0&isPromo=1&slug=ded_sw"
+      "link": "https://fogplay.mts.ru/platform/comp/21049/?tariff_id=33046&steamacc=0&isPromo=1&slug=ded_sw"
     },
     {
       "name": "12952X8",
-      "price": "26 ₽/час",
+      "price": "44 ₽/час",
       "ping": "Ping",
-      "link": "https://fogplay.mts.ru/platform/comp/23468/?tariff_id=33046&steamacc=0&isPromo=1&slug=ded_sw"
+      "link": "https://fogplay.mts.ru/platform/comp/23468/?tariff_id=33044&steamacc=0&isPromo=1&slug=ded_sw"
     },
     {
       "name": "12952X3",
-      "price": "17 ₽/час",
+      "price": "26 ₽/час",
       "ping": "Ping",
-      "link": "https://fogplay.mts.ru/platform/comp/21296/?tariff_id=33045&steamacc=0&isPromo=1&slug=ded_sw"
+      "link": "https://fogplay.mts.ru/platform/comp/21296/?tariff_id=33046&steamacc=0&isPromo=1&slug=ded_sw"
+    },
+    {
+      "name": "12952X10",
+      "price": "44 ₽/час",
+      "ping": "Ping",
+      "link": "https://fogplay.mts.ru/platform/comp/23911/?tariff_id=33044&steamacc=0&isPromo=1&slug=ded_sw"
+    },
+    {
+      "name": "12952X5",
+      "price": "26 ₽/час",
+      "ping": "Ping",
+      "link": "https://fogplay.mts.ru/platform/comp/23221/?tariff_id=33046&steamacc=0&isPromo=1&slug=ded_sw"
+    },
+    {
+      "name": "12952X9",
+      "price": "44 ₽/час",
+      "ping": "Ping",
+      "link": "https://fogplay.mts.ru/platform/comp/23473/?tariff_id=33044&steamacc=0&isPromo=1&slug=ded_sw"
+    },
+    {
+      "name": "12952X6",
+      "price": "26 ₽/час",
+      "ping": "Ping",
+      "link": "https://fogplay.mts.ru/platform/comp/23222/?tariff_id=33046&steamacc=0&isPromo=1&slug=ded_sw"
     }
   ]
 }
