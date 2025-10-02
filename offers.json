@@ -1,7 +1,7 @@
 {
-  "ts": 1759425410194,
+  "ts": 1759426278475,
   "url": "https://fogplay.mts.ru/promo/computer/ded_sw/",
-  "count": 4,
+  "count": 5,
   "items": [
     {
       "name": "12952X6",
@@ -20,6 +20,12 @@
       "price": "44 ₽/час",
       "ping": "Ping",
       "link": "https://fogplay.mts.ru/platform/comp/23911/?tariff_id=33044&steamacc=0&isPromo=1&slug=ded_sw"
+    },
+    {
+      "name": "12952X4",
+      "price": "35 ₽/час",
+      "ping": "Ping",
+      "link": "https://fogplay.mts.ru/platform/comp/22952/?tariff_id=33291&steamacc=0&isPromo=1&slug=ded_sw"
     },
     {
       "name": "12952X7",
